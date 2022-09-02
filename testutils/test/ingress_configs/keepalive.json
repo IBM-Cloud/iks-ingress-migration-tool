@@ -1,0 +1,54 @@
+{
+   "IngressObj": {
+      "Name": "keepalive",
+      "Namespace": "default",
+      "Annotations": {
+         "ingress.bluemix.net/keepalive-requests": "serviceName=coffee-svc requests=50;requests=80",
+         "ingress.bluemix.net/keepalive-timeout": "serviceName=coffee-svc timeout=10s;timeout=20s"
+      }
+   },
+   "IngressClass": "public-iks-k8s-nginx",
+   "Servers": [
+      {
+         "HostName": "test.us-east.stg.containers.appdomain.cloud",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHTTPS": false,
+                  "LocationSnippet": [
+                     "keepalive_requests 50;",
+                     "keepalive_timeout 10s;"
+                  ]
+               }
+            },
+            {
+               "Path": "/tea",
+               "ServiceName": "tea-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHTTPS": false
+               }
+            }
+         ],
+         "Annotations": {
+            "ServerSnippet": [
+               "keepalive_requests 80;",
+               "keepalive_timeout 20s;"
+            ]
+         }
+      }
+   ],
+   "IngressSpec": {
+      "TLS": [
+         {
+            "Hosts": [
+               "test.us-east.stg.containers.appdomain.cloud"
+            ],
+            "SecretName": "testSecret"
+         }
+      ]
+   }
+}

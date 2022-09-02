@@ -1,0 +1,45 @@
+{
+   "IngressObj": {
+      "name": "example",
+      "namespace": "default"
+   },
+   "IngressSpec": {
+      "tls": [
+         {
+            "hosts": [
+               "*.example.com"
+            ],
+            "secretName": "example-secret"
+         },
+         {
+            "hosts": [
+               "*.xmpl.com"
+            ],
+            "secretName": "xmpl-secret"
+         }
+      ]
+   },
+   "IngressClass": "test",
+   "Servers": [
+      {
+         "HostName": "*.example.com",
+         "Locations": [
+            {
+               "Path": "/tea",
+               "ServiceName": "tea-svc",
+               "ServicePort": 8080
+            }
+         ]
+      },
+      {
+         "HostName": "*.xmpl.com",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "ServicePort": 8080
+            }
+         ]
+      }
+   ]
+}

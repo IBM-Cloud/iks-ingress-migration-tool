@@ -1,0 +1,68 @@
+{
+   "IngressObj": {
+      "name": "basic-ingress-two-hosts",
+      "namespace": "default",
+      "annotations": {
+         "ingress.bluemix.net/rewrite-path": "serviceName=tea-svc rewrite=/leaves/;serviceName=coffee-svc rewrite=/beans/"
+      }
+   },
+   "IngressClass": "public-iks-k8s-nginx",
+   "Servers": [
+      {
+         "HostName": "test.us-east.stg.containers.appdomain.cloud",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "Rewrite": "/beans/",
+                  "LocationSnippet": null,
+                  "RedirectToHTTPS": false
+               }
+            },
+            {
+               "Path": "/tea",
+               "ServiceName": "tea-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "Rewrite": "/leaves/",
+                  "LocationSnippet": null,
+                  "RedirectToHTTPS": false
+               }
+            }
+         ],
+         "Annotations": {
+            "ServerSnippet": null
+         }
+      },
+      {
+         "HostName": "pretest.us-east.stg.containers.appdomain.cloud",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "Rewrite": "/beans/",
+                  "LocationSnippet": null,
+                  "RedirectToHTTPS": false
+               }
+            }
+         ],
+         "Annotations": {
+            "ServerSnippet": null
+         }
+      }
+   ],
+   "IngressSpec": {
+      "TLS": [
+         {
+            "Hosts": [
+               "test.us-east.stg.containers.appdomain.cloud"
+            ],
+            "SecretName": "testSecret"
+         }
+      ]
+   }
+}

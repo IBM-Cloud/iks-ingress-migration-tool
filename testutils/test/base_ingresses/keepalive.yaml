@@ -1,0 +1,30 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: keepalive
+  namespace: default
+  annotations:
+    ingress.bluemix.net/keepalive-requests: "serviceName=coffee-svc requests=50;requests=80"
+    ingress.bluemix.net/keepalive-timeout: "serviceName=coffee-svc timeout=10s;timeout=20s"
+spec:
+  tls:
+    - hosts:
+        - test.us-east.stg.containers.appdomain.cloud
+      secretName: testSecret
+  rules:
+    - host: test.us-east.stg.containers.appdomain.cloud
+      http:
+        paths:
+          - backend:
+              serviceName: coffee-svc
+              servicePort: 80
+            path: /coffee
+          - backend:
+              serviceName: tea-svc
+              servicePort: 80
+            path: /tea
+status:
+  loadBalancer:
+    ingress:
+      - ip: 10.86.77.141

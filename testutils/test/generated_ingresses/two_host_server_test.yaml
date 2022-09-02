@@ -1,0 +1,15 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: basic-ingress-two-hosts-server
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "test"
+spec:
+  tls:
+    - hosts:
+        - abcdef.example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000.mon01.containers.appdomain.cloud
+      secretName: example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000
+  rules:
+    - host: abcdef.example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000.mon01.containers.appdomain.cloud

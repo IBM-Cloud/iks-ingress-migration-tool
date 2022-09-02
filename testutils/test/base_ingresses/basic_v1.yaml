@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: basic-ingress
+  namespace: default
+spec:
+  tls:
+    - hosts:
+        - test.us-east.stg.containers.appdomain.cloud
+      secretName: testSecret
+  rules:
+    - host: test.us-east.stg.containers.appdomain.cloud
+      http:
+        paths:
+          - backend:
+              service:
+                name: coffee-svc
+                port:
+                  number: 80
+            path: /coffee
+          - backend:
+              service:
+                name: tea-svc
+                port:
+                  number: 80
+            path: /tea
+status:
+  loadBalancer:
+    ingress:
+      - ip: 10.86.77.141

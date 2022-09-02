@@ -1,0 +1,22 @@
+{
+   "IngressObj": {
+      "Name": "basic-ingress-no-services",
+      "Namespace": "default",
+      "Annotations": {
+         "ingress.bluemix.net/custom-errors": "serviceName=coffee-svc httpError=404 errorActionName=/error404",
+         "ingress.bluemix.net/custom-error-actions": "|\n\t\t\t\t\terrorActionName=/error404\n\t\t\t\t\tproxy_pass http://example.com/not-found.html;\n\t\t\t\t\t<EOS>",
+         "ingress.bluemix.net/upstream-max-fails": "serviceName=tea-svc max-fails=2",
+         "ingress.bluemix.net/proxy-external-service": "path=/example external-svc=https://example.com host=test.us-east.stg.containers.appdomain.cloud",
+         "ingress.bluemix.net/proxy-busy-buffers-size": "serviceName=coffee-svc size=1K",
+         "ingress.bluemix.net/add-host-port": "enabled=true serviceName=tea-svc",
+         "ingress.bluemix.net/iam-ui-auth": "serviceName=tea-svc clientSecretNamespace=default clientId=custom clientSecret=custom-secret redirectURL=https://cloud.ibm.com",
+         "ingress.bluemix.net/hsts": "enabled=true maxAge=31536000 includeSubdomains=true"
+      }
+   },
+   "IngressClass": "public-iks-k8s-nginx",
+   "Servers": [
+      {
+         "HostName": "test.us-east.stg.containers.appdomain.cloud"
+      }
+   ]
+}

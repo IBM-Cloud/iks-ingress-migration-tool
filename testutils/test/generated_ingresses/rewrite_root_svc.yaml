@@ -1,0 +1,24 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: rewrite-root-svc
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "public-iks-k8s-nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: "/new-root"
+    nginx.ingress.kubernetes.io/enable-rewrite-log: "true"
+spec:
+  tls:
+    - hosts:
+        - test.us-east.stg.containers.appdomain.cloud
+      secretName: testSecret
+  rules:
+    - host: test.us-east.stg.containers.appdomain.cloud
+      http:
+        paths:
+          - backend:
+              serviceName: root-svc
+              servicePort: 80
+            path: /

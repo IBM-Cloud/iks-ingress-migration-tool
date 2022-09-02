@@ -1,0 +1,45 @@
+{
+   "IngressObj": {
+      "name": "example-tea-svc-tea",
+      "namespace": "default"
+   },
+   "HostNames": [
+      "example.com"
+   ],
+   "TLSConfigs": [
+      {
+         "HostNames": [
+            "example.com"
+         ],
+         "Secret": "example-secret"
+      }
+   ],
+   "Path": "/tea",
+   "ServiceName": "tea-svc",
+   "servicePort": 8080,
+   "IngressClass": "public-iks-k8s-nginx",
+   "LocationAnnotations": {
+      "Rewrite": "/",
+      "RedirectToHttps": false,
+      "LocationSnippet": [
+         "more_set_headers 'Request-Id: $req_id';"
+      ],
+      "ClientMaxBodySize": "8m",
+      "ProxyBufferSize": "8k",
+      "ProxyBuffering": "on",
+      "ProxyBuffers": "4",
+      "ProxyReadTimeout": "10",
+      "ProxyConnectTimeout": "8",
+      "ProxySSLSecret": "default/example-secret",
+      "ProxySSLVerifyDepth": "2",
+      "ProxySSLName": "example.com",
+      "ProxySSLVerify": "on",
+      "ProxyNextUpstreamTries": "5",
+      "ProxyNextUpstreamTimeout": "9",
+      "ProxyNextUpstream": "error",
+      "SetStickyCookie": true,
+      "StickyCookieName": "example-cookie",
+      "StickyCookieExpire": "600",
+      "StickyCookiePath": "/example"
+   }
+}

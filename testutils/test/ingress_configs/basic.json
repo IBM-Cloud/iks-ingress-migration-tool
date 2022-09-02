@@ -1,0 +1,40 @@
+{
+   "IngressObj": {
+      "Name": "basic-ingress",
+      "Namespace": "default"
+   },
+   "IngressClass": "public-iks-k8s-nginx",
+   "Servers": [
+      {
+         "HostName": "test.us-east.stg.containers.appdomain.cloud",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHttps": false
+               }
+            },
+            {
+               "Path": "/tea",
+               "ServiceName": "tea-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHttps": false
+               }
+            }
+         ]
+      }
+   ],
+   "IngressSpec": {
+      "TLS": [
+         {
+            "Hosts": [
+               "test.us-east.stg.containers.appdomain.cloud"
+            ],
+            "SecretName": "testSecret"
+         }
+      ]
+   }
+}

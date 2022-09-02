@@ -1,0 +1,43 @@
+{
+   "IngressObj": {
+      "Name": "basic-ingress",
+      "Namespace": "default",
+      "Annotations": {
+         "ingress.bluemix.net/redirect-to-https": "True"
+      }
+   },
+   "IngressClass": "public-iks-k8s-nginx",
+   "Servers": [
+      {
+         "HostName": "test.us-east.stg.containers.appdomain.cloud",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHttps": true
+               }
+            },
+            {
+               "Path": "/tea",
+               "ServiceName": "tea-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHttps": true
+               }
+            }
+         ]
+      }
+   ],
+   "IngressSpec": {
+      "TLS": [
+         {
+            "Hosts": [
+               "test.us-east.stg.containers.appdomain.cloud"
+            ],
+            "SecretName": "testSecret"
+         }
+      ]
+   }
+}

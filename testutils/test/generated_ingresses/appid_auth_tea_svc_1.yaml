@@ -1,0 +1,34 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: basic-ingress-tea-svc-tea
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "public-iks-k8s-nginx"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      auth_request_set $name_upstream_1 $upstream_cookie__oauth2_appid_test_1;
+      auth_request_set $access_token $upstream_http_x_auth_request_access_token;
+      access_by_lua_block {
+        if ngx.var.name_upstream_1 ~= "" then
+          ngx.header["Set-Cookie"] = "_oauth2_appid_test_1=" .. ngx.var.name_upstream_1 .. ngx.var.auth_cookie:match("(; .*)")
+        end
+        if ngx.var.access_token ~= "" then
+          ngx.req.set_header("Authorization", "Bearer " .. ngx.var.access_token)
+        end
+      }
+    nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2-appid-test/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2-appid-test/start?rd=$escaped_request_uri"
+spec:
+  tls:
+    - hosts:
+        - test.us-east.stg.containers.appdomain.cloud
+      secretName: testSecret
+  rules:
+    - host: test.us-east.stg.containers.appdomain.cloud
+      http:
+        paths:
+          - backend:
+              serviceName: tea-svc
+              servicePort: 80
+            path: /tea

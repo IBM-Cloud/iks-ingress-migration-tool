@@ -1,0 +1,22 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: test
+    nginx.ingress.kubernetes.io/ssl-redirect: false
+  name: example-coffee-svc-coffee
+  namespace: default
+spec:
+  rules:
+    - host: "*.wc-1.example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000.mon01.containers.appdomain.cloud"
+      http:
+        paths:
+          - backend:
+              serviceName: coffee-svc
+              servicePort: 8080
+            path: /coffee
+  tls:
+    - hosts:
+        - "*.wc-1.example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000.mon01.containers.appdomain.cloud"
+      secretName: example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000

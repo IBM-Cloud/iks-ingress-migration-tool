@@ -1,0 +1,47 @@
+{
+   "IngressObj": {
+      "Name": "header-modifier",
+      "Namespace": "default",
+      "Annotations": {
+         "ingress.bluemix.net/proxy-add-headers":"serviceName=coffee-svc {\nheader1 value1;\nheader2 value2;\n}\nserviceName=tea-svc {\nheader3 value3;\n}\n",
+         "ingress.bluemix.net/response-add-headers":"serviceName=coffee-svc {\nheader4:value1;\nheader5:value3;\n}\nserviceName=tea-svc {\nheader6:value6;\n}\n",
+         "ingress.bluemix.net/response-remove-headers":"serviceName=coffee-svc {\nheader7;\nheader8;\n}\nserviceName=tea-svc {\nheader9;\n}\n"
+         }
+   },
+   "IngressClass": "public-iks-k8s-nginx",
+   "Servers": [
+      {
+         "HostName": "test.us-east.stg.containers.appdomain.cloud",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHTTPS": false,
+                  "LocationSnippet":["proxy_set_header header1 value1;", "proxy_set_header header2 value2;", "more_set_headers header4:value1;", "more_set_headers header5:value3;", "more_clear_headers header7;", "more_clear_headers header8;"]
+               }
+            },
+            {
+               "Path": "/tea",
+               "ServiceName": "tea-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHTTPS": false,
+                  "LocationSnippet": ["proxy_set_header header3 value3;", "more_set_headers header6:value6;", "more_clear_headers header9;"]
+               }
+            }
+         ]
+      }
+   ],
+   "IngressSpec": {
+      "TLS": [
+         {
+            "Hosts": [
+               "test.us-east.stg.containers.appdomain.cloud"
+            ],
+            "SecretName": "testSecret"
+         }
+      ]
+   }
+}

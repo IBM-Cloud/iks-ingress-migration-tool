@@ -1,0 +1,131 @@
+{
+   "IngressObj": {
+      "name": "example",
+      "namespace": "default",
+      "annotations": {
+         "ingress.bluemix.net/rewrite-path": "serviceName=tea-svc rewrite=/;serviceName=coffee-svc rewrite=/",
+         "ingress.bluemix.net/redirect-to-https": "false",
+         "ingress.bluemix.net/location-snippets": "serviceName=tea-svc\nmore_set_headers 'Request-Id: $req_id';\n<EOS>\nserviceName=coffee-svc\nmore_set_headers 'Request-Id: $req_id';\n<EOS>\n",
+         "ingress.bluemix.net/client-max-body-size": "serviceName=tea-svc size=8m;serviceName=coffee-svc size=8m",
+         "ingress.bluemix.net/proxy-buffer-size": "serviceName=tea-svc size=8k;serviceName=coffee-svc size=8k",
+         "ingress.bluemix.net/proxy-buffering": "enabled=true serviceName=tea-svc;enabled=true serviceName=coffee-svc",
+         "ingress.bluemix.net/proxy-buffers": "serviceName=tea-svc number=4 size=8k;serviceName=coffee-svc number=4 size=8k",
+         "ingress.bluemix.net/proxy-read-timeout": "serviceName=tea-svc timeout=10s;serviceName=coffee-svc timeout=10s",
+         "ingress.bluemix.net/proxy-connect-timeout": "serviceName=tea-svc timeout=8s;serviceName=coffee-svc timeout=8s",
+         "ingress.bluemix.net/ssl-services": "ssl-service=tea-svc ssl-secret=example-secret proxy-ssl-verify-depth=2 proxy-ssl-name=example.com;ssl-service=coffee-svc ssl-secret=example-secret proxy-ssl-verify-depth=2 proxy-ssl-name=example.com",
+         "ingress.bluemix.net/proxy-next-upstream-config": "serviceName=tea-svc retries=5 timeout=9 error=true;serviceName=coffee-svc retries=5 timeout=9 error=true",
+         "ingress.bluemix.net/sticky-cookie-services": "serviceName=tea-svc name=example-cookie expires=10m path=/example hash=sha1 secure httponly;serviceName=coffee-svc name=example-cookie expires=10m path=/example hash=sha1 secure httponly",
+         "ingress.bluemix.net/server-snippets": "location = /health {\n  return 200 'Healthy';\n  add_header Content-Type text/plain;\n}\n",
+         "ingress.bluemix.net/mutual-auth": "secretName=example-mutual-secret port=443 serviceName=tea-svc,coffee-svc"
+      }
+   },
+   "IngressSpec": {
+      "tls": [
+         {
+            "hosts": [
+               "example.com"
+            ],
+            "secretName": "example-secret"
+         },
+         {
+            "hosts": [
+               "xmpl.com"
+            ],
+            "secretName": "xmpl-secret"
+         }
+      ]
+   },
+   "IngressClass": "test",
+   "Servers": [
+      {
+         "HostName": "example.com",
+         "Locations": [
+            {
+               "Path": "/tea",
+               "ServiceName": "tea-svc",
+               "servicePort": 8080,
+               "Annotations": {
+                  "Rewrite": "/",
+                  "RedirectToHttps": false,
+                  "LocationSnippet": [
+                     "more_set_headers 'Request-Id: $req_id';"
+                  ],
+                  "ClientMaxBodySize": "8m",
+                  "ProxyBufferSize": "8k",
+                  "ProxyBuffering": "on",
+                  "ProxyBuffers": "4",
+                  "ProxyReadTimeout": "10",
+                  "ProxyConnectTimeout": "8",
+                  "ProxySSLSecret": "default/example-secret",
+                  "ProxySSLVerifyDepth": "2",
+                  "ProxySSLName": "example.com",
+                  "ProxySSLVerify": "on",
+                  "ProxyNextUpstreamTries": "5",
+                  "ProxyNextUpstreamTimeout": "9",
+                  "ProxyNextUpstream": "error",
+                  "SetStickyCookie": true,
+                  "StickyCookieName": "example-cookie",
+                  "StickyCookieExpire": "600",
+                  "StickyCookiePath": "/example"
+               }
+            }
+         ],
+         "Annotations": {
+            "ServerSnippet": [
+               "location = /health {",
+               "  return 200 'Healthy';",
+               "  add_header Content-Type text/plain;",
+               "}",
+               ""
+            ],
+            "SetMutualAuth": true,
+            "MutualAuthSecretName": "default/example-mutual-secret"
+         }
+      },
+      {
+         "HostName": "xmpl.com",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "servicePort": 8080,
+               "Annotations": {
+                  "Rewrite": "/",
+                  "RedirectToHttps": false,
+                  "LocationSnippet": [
+                     "more_set_headers 'Request-Id: $req_id';"
+                  ],
+                  "ClientMaxBodySize": "8m",
+                  "ProxyBufferSize": "8k",
+                  "ProxyBuffering": "on",
+                  "ProxyBuffers": "4",
+                  "ProxyReadTimeout": "10",
+                  "ProxyConnectTimeout": "8",
+                  "ProxySSLSecret": "default/example-secret",
+                  "ProxySSLVerifyDepth": "2",
+                  "ProxySSLName": "example.com",
+                  "ProxySSLVerify": "on",
+                  "ProxyNextUpstreamTries": "5",
+                  "ProxyNextUpstreamTimeout": "9",
+                  "ProxyNextUpstream": "error",
+                  "SetStickyCookie": true,
+                  "StickyCookieName": "example-cookie",
+                  "StickyCookieExpire": "600",
+                  "StickyCookiePath": "/example"
+               }
+            }
+         ],
+         "Annotations": {
+            "ServerSnippet": [
+               "location = /health {",
+               "  return 200 'Healthy';",
+               "  add_header Content-Type text/plain;",
+               "}",
+               ""
+            ],
+            "SetMutualAuth": true,
+            "MutualAuthSecretName": "default/example-mutual-secret"
+         }
+      }
+   ]
+}

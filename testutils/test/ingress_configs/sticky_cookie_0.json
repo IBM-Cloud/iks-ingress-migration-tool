@@ -1,0 +1,68 @@
+{
+   "IngressObj": {
+      "name": "basic-ingress-two-hosts",
+      "namespace": "default",
+      "annotations": {
+         "ingress.bluemix.net/sticky-cookie-services": "serviceName=tea-svc name=sticky-tea expires=1h hash=sha1 secure httponly;serviceName=coffee-svc name=sticky-coffee expires=30s path=/coffee/sticky hash=sha1 secure httponly"
+      }
+   },
+   "IngressClass": "public-iks-k8s-nginx",
+   "Servers": [
+      {
+         "HostName": "test.us-east.stg.containers.appdomain.cloud",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHttps": false,
+                  "SetStickyCookie": true,
+                  "StickyCookieName": "sticky-coffee",
+                  "StickyCookieExpire": "30",
+                  "StickyCookiePath": "/coffee/sticky"
+               }
+            },
+            {
+               "Path": "/tea",
+               "ServiceName": "tea-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHttps": false,
+                  "SetStickyCookie": true,
+                  "StickyCookieName": "sticky-tea",
+                  "StickyCookieExpire": "3600",
+                  "StickyCookiePath": ""
+               }
+            }
+         ]
+      },
+      {
+         "HostName": "pretest.us-east.stg.containers.appdomain.cloud",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHttps": false,
+                  "SetStickyCookie": true,
+                  "StickyCookieName": "sticky-coffee",
+                  "StickyCookieExpire": "30",
+                  "StickyCookiePath": "/coffee/sticky"
+               }
+            }
+         ]
+      }
+   ],
+   "IngressSpec": {
+      "TLS": [
+         {
+            "Hosts": [
+               "test.us-east.stg.containers.appdomain.cloud"
+            ],
+            "SecretName": "testSecret"
+         }
+      ]
+   }
+}

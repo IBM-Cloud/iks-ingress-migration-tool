@@ -1,0 +1,29 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: large-client-headers
+  namespace: default
+  annotations:
+    ingress.bluemix.net/large-client-header-buffers: "number=4 size=32k"
+spec:
+  tls:
+    - hosts:
+        - test.us-east.stg.containers.appdomain.cloud
+      secretName: testSecret
+  rules:
+    - host: test.us-east.stg.containers.appdomain.cloud
+      http:
+        paths:
+          - backend:
+              serviceName: coffee-svc
+              servicePort: 80
+            path: /coffee
+          - backend:
+              serviceName: tea-svc
+              servicePort: 80
+            path: /tea
+status:
+  loadBalancer:
+    ingress:
+      - ip: 10.86.77.141

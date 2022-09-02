@@ -1,0 +1,37 @@
+{
+   "IngressObj": {
+      "name": "example-server",
+      "namespace": "default"
+   },
+   "HostNames": [
+      "example.com",
+      "xmpl.com"
+   ],
+   "TLSConfigs": [
+      {
+         "HostNames": [
+            "example.com"
+         ],
+         "Secret": "example-secret"
+      },
+      {
+         "HostNames": [
+            "xmpl.com"
+         ],
+         "Secret": "xmpl-secret"
+      }
+   ],
+   "IngressClass": "public-iks-k8s-nginx",
+   "ServerAnnotations": {
+      "ServerSnippet": [
+         "location = /health {",
+         "  return 200 'Healthy';",
+         "  add_header Content-Type text/plain;",
+         "}",
+         ""
+      ],
+      "SetMutualAuth": true,
+      "MutualAuthSecretName": "default/example-mutual-secret"
+   },
+   "IsServerConfig": true
+}

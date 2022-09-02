@@ -1,0 +1,61 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ingress-migration
+  namespace: kube-system
+spec:
+  template:
+    metadata:
+      labels:
+        app: ingress-migrator
+    spec:
+      containers:
+        - name: migrator
+          image: "ingress-migrator:local"
+          imagePullPolicy: Always
+          env:
+            - name: MODE
+              value: "production"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsUser: 2000
+            runAsGroup: 2000
+      restartPolicy: Never
+  backoffLimit: 1
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ibm-ingress-migrator-role
+  labels:
+    app: ingress-migrator
+rules:
+  - apiGroups:
+      - extensions
+      - networking.k8s.io
+    resources: ["ingresses"]
+    verbs:
+      ["get", "watch", "list", "create", "post", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs:
+      ["get", "watch", "list", "create", "post", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ibm-ingress-migrator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ibm-ingress-migrator-role
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: kube-system

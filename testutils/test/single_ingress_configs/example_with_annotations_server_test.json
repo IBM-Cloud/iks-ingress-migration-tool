@@ -1,0 +1,30 @@
+{
+   "IngressObj": {
+      "name": "example-server",
+      "namespace": "default"
+   },
+   "HostNames": [
+      "abcdef.example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000.mon01.containers.appdomain.cloud"
+   ],
+   "TLSConfigs": [
+      {
+         "HostNames": [
+            "abcdef.example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000.mon01.containers.appdomain.cloud"
+         ],
+         "Secret": "example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000"
+      }
+   ],
+   "IngressClass": "test",
+   "ServerAnnotations": {
+      "ServerSnippet": [
+         "location = /health {",
+         "  return 200 'Healthy';",
+         "  add_header Content-Type text/plain;",
+         "}",
+         ""
+      ],
+      "SetMutualAuth": true,
+      "MutualAuthSecretName": "default/example-mutual-secret"
+   },
+   "IsServerConfig": true
+}

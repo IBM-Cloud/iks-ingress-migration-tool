@@ -1,0 +1,18 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: basic-ingress-two-hosts-coffee-svc-coffee-0
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "public-iks-k8s-nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    - host: pretest.us-east.stg.containers.appdomain.cloud
+      http:
+        paths:
+          - backend:
+              serviceName: coffee-svc
+              servicePort: 80
+            path: /coffee

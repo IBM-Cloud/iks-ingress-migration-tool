@@ -1,0 +1,22 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: basic-ingress-tea-svc-tea
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "test"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  tls:
+    - hosts:
+        - abcdef.example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000.mon01.containers.appdomain.cloud
+      secretName: example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000
+  rules:
+    - host: abcdef.example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000.mon01.containers.appdomain.cloud
+      http:
+        paths:
+          - backend:
+              serviceName: tea-svc
+              servicePort: 80
+            path: /tea

@@ -1,0 +1,62 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    {{if .IngressClass}}kubernetes.io/ingress.class: {{.IngressClass}}{{end}}
+    {{if .LocationAnnotations.Rewrite}}nginx.ingress.kubernetes.io/rewrite-target: {{.LocationAnnotations.Rewrite}}
+    nginx.ingress.kubernetes.io/enable-rewrite-log: true{{end}}
+    {{if not .LocationAnnotations.RedirectToHTTPS}}nginx.ingress.kubernetes.io/ssl-redirect: false{{end}}
+    {{if .LocationAnnotations.LocationSnippet}}nginx.ingress.kubernetes.io/configuration-snippet: |{{range $value := .LocationAnnotations.LocationSnippet}}
+      {{$value}}{{end}}
+    {{end}}
+    {{if .LocationAnnotations.ClientMaxBodySize}}nginx.ingress.kubernetes.io/proxy-body-size: {{.LocationAnnotations.ClientMaxBodySize}}{{end}}
+    {{if .LocationAnnotations.ProxyBufferSize}}nginx.ingress.kubernetes.io/proxy-buffer-size: {{.LocationAnnotations.ProxyBufferSize}}{{end}}
+    {{if .LocationAnnotations.ProxyBuffering}}nginx.ingress.kubernetes.io/proxy-buffering: "{{.LocationAnnotations.ProxyBuffering}}"{{end}}
+    {{if .LocationAnnotations.ProxyBuffers}}nginx.ingress.kubernetes.io/proxy-buffers-number: {{.LocationAnnotations.ProxyBuffers}}{{end}}
+    {{if .LocationAnnotations.ProxyReadTimeout}}nginx.ingress.kubernetes.io/proxy-read-timeout: {{.LocationAnnotations.ProxyReadTimeout}}{{end}}
+    {{if .LocationAnnotations.ProxyConnectTimeout}}nginx.ingress.kubernetes.io/proxy-connect-timeout: {{.LocationAnnotations.ProxyConnectTimeout}}{{end}}
+    {{if .LocationAnnotations.ProxySSLSecret}}nginx.ingress.kubernetes.io/proxy-ssl-secret: {{.LocationAnnotations.ProxySSLSecret}}{{end}}
+    {{if .LocationAnnotations.ProxySSLVerifyDepth}}nginx.ingress.kubernetes.io/proxy-ssl-verify-depth: {{.LocationAnnotations.ProxySSLVerifyDepth}}{{end}}
+    {{if .LocationAnnotations.ProxySSLName}}nginx.ingress.kubernetes.io/proxy-ssl-name: {{.LocationAnnotations.ProxySSLName}}{{end}}
+    {{if .LocationAnnotations.ProxySSLVerify}}
+    nginx.ingress.kubernetes.io/proxy-ssl-verify: "{{.LocationAnnotations.ProxySSLVerify}}"
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS{{end}}
+    {{if .LocationAnnotations.ProxyNextUpstreamTries}}nginx.ingress.kubernetes.io/proxy-next-upstream-tries: {{.LocationAnnotations.ProxyNextUpstreamTries}}{{end}}
+    {{if .LocationAnnotations.ProxyNextUpstreamTimeout}}nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: {{.LocationAnnotations.ProxyNextUpstreamTimeout}}{{end}}
+    {{if .LocationAnnotations.ProxyNextUpstream}}nginx.ingress.kubernetes.io/proxy-next-upstream: {{.LocationAnnotations.ProxyNextUpstream}}{{end}}
+    {{if .LocationAnnotations.SetStickyCookie}}
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/affinity-mode: persistent
+    nginx.ingress.kubernetes.io/session-cookie-change-on-failure: false
+    {{if .LocationAnnotations.StickyCookieName}}nginx.ingress.kubernetes.io/session-cookie-name: {{.LocationAnnotations.StickyCookieName}}{{end}}
+    {{if .LocationAnnotations.StickyCookieExpire}}
+    nginx.ingress.kubernetes.io/session-cookie-max-age: {{.LocationAnnotations.StickyCookieExpire}}
+    nginx.ingress.kubernetes.io/session-cookie-expires: {{.LocationAnnotations.StickyCookieExpire}}
+    {{end}}
+    {{if .LocationAnnotations.StickyCookiePath}}nginx.ingress.kubernetes.io/session-cookie-path: {{.LocationAnnotations.StickyCookiePath}}{{end}}
+    {{end}}
+    {{if .LocationAnnotations.AppIDAuthURL}}
+    nginx.ingress.kubernetes.io/auth-url: {{.LocationAnnotations.AppIDAuthURL}}
+    {{if .LocationAnnotations.AppIDSignInURL}}nginx.ingress.kubernetes.io/auth-signin: {{.LocationAnnotations.AppIDSignInURL}}{{end}}
+    {{end}}
+    {{if .LocationAnnotations.UseRegex}}nginx.ingress.kubernetes.io/use-regex: true{{end}}
+  name: {{.IngressObj.Name}}
+  namespace: {{.IngressObj.Namespace}}
+spec:
+{{- if .TLSConfigs}}
+  tls:
+  - hosts:
+    - "{{index (index .TLSConfigs 0).HostNames 0}}"
+    secretName: {{(index .TLSConfigs 0).Secret}}
+{{- end}}
+  rules:
+  - host: "{{index .HostNames 0}}"
+{{- if .ServiceName}}
+    http:
+      paths:
+      - backend:
+          serviceName: {{.ServiceName}}
+          servicePort: {{.ServicePort}}
+        {{if .Path}}path: {{.Path}}{{end}}
+        {{if .PathType}}pathType: {{.PathType}}{{end}}
+{{- end}}

@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    {{if .IngressClass}}kubernetes.io/ingress.class: {{.IngressClass}}{{end}}
+    {{if .ServerAnnotations.ServerSnippet}}nginx.ingress.kubernetes.io/server-snippet: |{{range $value := .ServerAnnotations.ServerSnippet}}
+      {{$value}}{{end}}
+    {{end}}
+    {{if .ServerAnnotations.SetMutualAuth}}
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
+    nginx.ingress.kubernetes.io/auth-tls-verify-depth: 5
+    nginx.ingress.kubernetes.io/auth-tls-secret: {{.ServerAnnotations.MutualAuthSecretName}}
+    {{end}}
+
+  name: {{.IngressObj.Name}}
+  namespace: {{.IngressObj.Namespace}}
+spec:
+{{- if .TLSConfigs}}
+  tls:
+  {{- range $TLSConfig := .TLSConfigs}}
+  - hosts:
+    {{- range $HostName := $TLSConfig.HostNames}}
+    - "{{$HostName}}"
+    {{- end}}
+    secretName: {{$TLSConfig.Secret}}
+  {{- end}}
+{{- end}}
+  rules:
+{{- range $host := .HostNames}}
+  - host: "{{$host}}"
+{{- end}}

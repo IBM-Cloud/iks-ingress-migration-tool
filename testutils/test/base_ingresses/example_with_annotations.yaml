@@ -1,0 +1,54 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: example
+  namespace: default
+  annotations:
+    ingress.bluemix.net/rewrite-path: "serviceName=tea-svc rewrite=/;serviceName=coffee-svc rewrite=/"
+    ingress.bluemix.net/redirect-to-https: "false"
+    ingress.bluemix.net/location-snippets: |
+      serviceName=tea-svc
+      more_set_headers 'Request-Id: $req_id';
+      <EOS>
+      serviceName=coffee-svc
+      more_set_headers 'Request-Id: $req_id';
+      <EOS>
+    ingress.bluemix.net/client-max-body-size: "serviceName=tea-svc size=8m;serviceName=coffee-svc size=8m"
+    ingress.bluemix.net/proxy-buffer-size: "serviceName=tea-svc size=8k;serviceName=coffee-svc size=8k"
+    ingress.bluemix.net/proxy-buffering: "enabled=true serviceName=tea-svc;enabled=true serviceName=coffee-svc"
+    ingress.bluemix.net/proxy-buffers: "serviceName=tea-svc number=4 size=8k;serviceName=coffee-svc number=4 size=8k"
+    ingress.bluemix.net/proxy-read-timeout: "serviceName=tea-svc timeout=10s;serviceName=coffee-svc timeout=10s"
+    ingress.bluemix.net/proxy-connect-timeout: "serviceName=tea-svc timeout=8s;serviceName=coffee-svc timeout=8s"
+    ingress.bluemix.net/ssl-services: "ssl-service=tea-svc ssl-secret=example-secret proxy-ssl-verify-depth=2 proxy-ssl-name=example.com;ssl-service=coffee-svc ssl-secret=example-secret proxy-ssl-verify-depth=2 proxy-ssl-name=example.com"
+    ingress.bluemix.net/proxy-next-upstream-config: "serviceName=tea-svc retries=5 timeout=9 error=true;serviceName=coffee-svc retries=5 timeout=9 error=true"
+    ingress.bluemix.net/sticky-cookie-services: "serviceName=tea-svc name=example-cookie expires=10m path=/example hash=sha1 secure httponly;serviceName=coffee-svc name=example-cookie expires=10m path=/example hash=sha1 secure httponly"
+    ingress.bluemix.net/server-snippets: |
+      location = /health {
+        return 200 'Healthy';
+        add_header Content-Type text/plain;
+      }
+    ingress.bluemix.net/mutual-auth: "secretName=example-mutual-secret port=443 serviceName=tea-svc,coffee-svc"
+spec:
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - backend:
+              serviceName: tea-svc
+              servicePort: 8080
+            path: /tea
+    - host: xmpl.com
+      http:
+        paths:
+          - backend:
+              serviceName: coffee-svc
+              servicePort: 8080
+            path: /coffee
+  tls:
+    - hosts:
+        - example.com
+      secretName: example-secret
+    - hosts:
+        - xmpl.com
+      secretName: xmpl-secret

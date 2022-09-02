@@ -1,0 +1,24 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: test
+    nginx.ingress.kubernetes.io/auth-tls-secret: default/example-mutual-secret
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
+    nginx.ingress.kubernetes.io/auth-tls-verify-depth: "5"
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location = /health {
+        return 200 'Healthy';
+        add_header Content-Type text/plain;
+      }
+  creationTimestamp: null
+  name: example-server
+  namespace: default
+spec:
+  rules:
+    - host: abcdef.example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000.mon01.containers.appdomain.cloud
+  tls:
+    - hosts:
+        - abcdef.example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000.mon01.containers.appdomain.cloud
+      secretName: example-cluster-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-m000

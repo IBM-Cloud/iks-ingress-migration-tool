@@ -1,0 +1,18 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: keepalive-server
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/server-snippet: |
+      keepalive_requests 80;
+      keepalive_timeout 20s;
+    kubernetes.io/ingress.class: "public-iks-k8s-nginx"
+spec:
+  tls:
+    - hosts:
+        - test.us-east.stg.containers.appdomain.cloud
+      secretName: testSecret
+  rules:
+    - host: test.us-east.stg.containers.appdomain.cloud

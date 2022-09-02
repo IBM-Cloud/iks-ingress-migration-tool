@@ -1,0 +1,15 @@
+{
+   "IngressObj": {
+      "Name": "basic-ingress-no-services",
+      "Namespace": "default",
+      "Annotations": {
+         "ingress.bluemix.net/ALB-ID": "public-crbrf374uw0lkun14n0jl0-alb1"
+      }
+   },
+   "IngressClass": "public-iks-k8s-nginx",
+   "Servers": [
+      {
+         "HostName": "test.us-east.stg.containers.appdomain.cloud"
+      }
+   ]
+}

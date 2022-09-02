@@ -1,0 +1,65 @@
+{
+   "IngressObj": {
+      "name": "basic-ingress-two-hosts",
+      "namespace": "default",
+      "annotations": {
+         "ingress.bluemix.net/redirect-to-https": "True",
+         "ingress.bluemix.net/mutual-auth": "secretName=example-ca-cert port=443 serviceName=coffee-svc"
+      }
+   },
+   "IngressClass": "public-iks-k8s-nginx",
+   "Servers": [
+      {
+         "HostName": "test.us-east.stg.containers.appdomain.cloud",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHTTPS": true
+               }
+            },
+            {
+               "Path": "/tea",
+               "ServiceName": "tea-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHTTPS": true
+               }
+            }
+         ],
+         "Annotations": {
+            "SetMutualAuth": true,
+            "MutualAuthSecretName": "default/example-ca-cert"
+         }
+      },
+      {
+         "HostName": "pretest.us-east.stg.containers.appdomain.cloud",
+         "Locations": [
+            {
+               "Path": "/coffee",
+               "ServiceName": "coffee-svc",
+               "ServicePort": 80,
+               "Annotations": {
+                  "RedirectToHTTPS": true
+               }
+            }
+         ],
+         "Annotations": {
+            "SetMutualAuth": true,
+            "MutualAuthSecretName": "default/example-ca-cert"
+         }
+      }
+   ],
+   "IngressSpec": {
+      "TLS": [
+         {
+            "Hosts": [
+               "test.us-east.stg.containers.appdomain.cloud"
+            ],
+            "SecretName": "testSecret"
+         }
+      ]
+   }
+}

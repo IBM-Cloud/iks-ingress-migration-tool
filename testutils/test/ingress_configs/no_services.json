@@ -1,0 +1,12 @@
+{
+   "IngressObj": {
+      "Name": "basic-ingress-no-services",
+      "Namespace": "default"
+   },
+   "IngressClass": "public-iks-k8s-nginx",
+   "Servers": [
+      {
+         "HostName": "test.us-east.stg.containers.appdomain.cloud"
+      }
+   ]
+}
